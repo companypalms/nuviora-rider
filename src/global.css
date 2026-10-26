@@ -1,0 +1,32 @@
+@import 'tailwindcss';
+@import 'uniwind';
+
+@import 'heroui-native/styles';
+
+/* HeroUI arma estos dos con color-mix(): en el teléfono Uniwind los resuelve, pero en la vista previa web el botón no
+   puede leerlos y cae a negro. Con valores fijos se ven igual en los dos. */
+@theme {
+  --color-default-hover: #e4e7ec;
+  --color-accent-hover: #0063db;
+}
+
+/* Los colores de Nuviora sobre el tema de HeroUI Native. La app es clara (se lee mejor en la calle), pero se definen los
+   dos modos porque el tema los pide. */
+@layer theme {
+  @variant light {
+    --accent: #0073ff;
+    --accent-foreground: #ffffff;
+    --danger: #d93a40;
+    --danger-foreground: #ffffff;
+    --success: #127f58;
+    --success-foreground: #ffffff;
+  }
+  @variant dark {
+    --accent: #4b9dff;
+    --accent-foreground: #08111f;
+    --danger: #e5484d;
+    --danger-foreground: #ffffff;
+    --success: #3ccb93;
+    --success-foreground: #08111f;
+  }
+}
