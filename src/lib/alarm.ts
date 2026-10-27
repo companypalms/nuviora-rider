@@ -96,6 +96,17 @@ export async function handlePush(raw: Record<string, unknown>): Promise<void> {
 
 export type DeviceReport = { ready: boolean; notifications: boolean; error: string | null };
 
+// El último token de Firebase que se mandó al servidor
+let knownToken: string | null = null;
+
+/**
+ * Expo avisa "token nuevo" cada vez que la app pide el token, no solo cuando Firebase lo cambia. Volver a registrar el
+ * teléfono con ese aviso lo pedía otra vez: un bucle de cientos de llamadas por minuto. Solo cuenta si es otro token.
+ */
+export function isNewPushToken(token: string): boolean {
+  return token !== knownToken;
+}
+
 /**
  * Registra el teléfono en Nuviora (§6.1: "app con notificaciones habilitadas… permisos de ubicación"): el token de
  * Firebase, si las notificaciones están permitidas y el permiso de ubicación. Sin esto no le llegan rondas.
@@ -115,6 +126,7 @@ export async function registerDevice(location: LocationState, ask = true): Promi
   let error: string | null = null;
   try {
     pushToken = (await Notifications.getDevicePushTokenAsync()).data as string;
+    knownToken = pushToken;
   } catch {
     error = 'No se pudo registrar la alarma en este teléfono. Revisa el internet y vuelve a abrir la app.';
   }

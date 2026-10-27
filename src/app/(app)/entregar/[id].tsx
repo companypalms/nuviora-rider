@@ -1,3 +1,4 @@
+import { File } from 'expo-file-system';
 import * as ImagePicker from 'expo-image-picker';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
@@ -56,7 +57,9 @@ export default function DeliverScreen() {
       if (Platform.OS === 'web' && photo.file) {
         form.append('payment_receipt', photo.file);
       } else {
-        form.append('payment_receipt', { uri: photo.uri, name: photo.fileName ?? 'comprobante.jpg', type: photo.mimeType ?? 'image/jpeg' } as unknown as Blob);
+        // Expo 58 cambió el fetch de la app por el suyo, que no acepta el { uri, name, type } de React Native: la foto
+        // fallaba antes de salir del teléfono y se veía "Sin conexión". Con File de expo-file-system manda los bytes.
+        form.append('payment_receipt', new File(photo.uri));
       }
       await api(`/orders/${a.order.id}/payment-receipt`, { form });
       await api(`/orders/${a.order.id}/status`, {

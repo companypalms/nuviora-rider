@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { KeyboardAvoidingView, Platform, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView } from '@/components/safe-area-view';
 import { Input } from 'heroui-native/input';
 import { Label } from 'heroui-native/label';
 import { TextField } from 'heroui-native/text-field';

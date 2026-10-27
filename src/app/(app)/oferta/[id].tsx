@@ -1,7 +1,7 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Text, Vibration, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView } from '@/components/safe-area-view';
 import { Button } from '@/components/ui';
 import { stopAlarm } from '@/lib/alarm';
 import { api, ApiError, type Offer } from '@/lib/api';

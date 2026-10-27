@@ -2,10 +2,10 @@ import * as Notifications from 'expo-notifications';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AppState, Platform, Pressable, RefreshControl, ScrollView, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView } from '@/components/safe-area-view';
 import { Chip } from 'heroui-native/chip';
 import { Button, Card, Notice, Row } from '@/components/ui';
-import { registerDevice, type DeviceReport } from '@/lib/alarm';
+import { isNewPushToken, registerDevice, type DeviceReport } from '@/lib/alarm';
 import { api, type Assignment, type Me, type Offer } from '@/lib/api';
 import { askToIgnoreBatteryOptimization, batteryRestricted, isXiaomi, openAppSettings } from '@/lib/battery';
 import { money } from '@/lib/format';
@@ -83,7 +83,13 @@ export default function Home() {
       }
     });
     // Firebase puede cambiar el token del teléfono: el servidor necesita el nuevo para que siga llegando la alarma
-    const tokenSub = Platform.OS !== 'web' ? Notifications.addPushTokenListener(() => void setup(false)) : null;
+    const tokenSub = Platform.OS !== 'web'
+      ? Notifications.addPushTokenListener(({ data }) => {
+          if (isNewPushToken(String(data))) {
+            void setup(false);
+          }
+        })
+      : null;
     return () => {
       sub.remove();
       tokenSub?.remove();

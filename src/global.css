@@ -4,8 +4,9 @@
 @import 'heroui-native/styles';
 
 /* HeroUI arma estos dos con color-mix(): en el teléfono Uniwind los resuelve, pero en la vista previa web el botón no
-   puede leerlos y cae a negro. Con valores fijos se ven igual en los dos. */
-@theme {
+   puede leerlos y cae a negro. Con valores fijos se ven igual en los dos. Van "inline static", como en HeroUI: sin
+   "static", Tailwind los descarta porque ninguna clase los usa, el botón los pide y la app se cerraba al abrir. */
+@theme inline static {
   --color-default-hover: #e4e7ec;
   --color-accent-hover: #0063db;
 }

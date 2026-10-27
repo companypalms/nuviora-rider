@@ -4,7 +4,7 @@ import { api, restoreToken } from './api';
 
 // La ubicación del rider para que el sistema sepa a quién darle una orden (§6, §7). En el teléfono va con el servicio
 // de ubicación de Android (src/background.ts): sigue con la app cerrada o la pantalla apagada y deja una notificación
-// fija mientras corre. En la vista previa web, solo con la pestaña abierta. Cada 30 s o cada 100 m (lo dice el
+// fija mientras corre. En la vista previa web, solo con la pestaña abierta. Cada 30 s, aunque no se mueva (lo dice el
 // servidor), en lotes: si no hay señal, se guardan y salen juntas.
 export const LOCATION_TASK = 'nuviora-ubicacion';
 
@@ -54,7 +54,7 @@ export type LocationState = 'siempre' | 'en_uso' | 'negado';
  * Pide los permisos y empieza a mandar la ubicación. Devuelve el permiso que quedó. Android pide "Permitir siempre"
  * aparte, después de "Mientras la app está en uso" (a veces abre los ajustes): §6.1 lo necesita para dar rondas.
  */
-export async function startLocation(everySeconds = 30, everyMeters = 100, ask = true): Promise<LocationState> {
+export async function startLocation(everySeconds = 30, everyMeters = 0, ask = true): Promise<LocationState> {
   const fg = ask ? await Location.requestForegroundPermissionsAsync() : await Location.getForegroundPermissionsAsync();
   if (fg.status !== 'granted') {
     return 'negado';
