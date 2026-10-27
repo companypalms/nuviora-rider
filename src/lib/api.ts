@@ -93,6 +93,14 @@ export type Assignment = {
   // §14: el reemplazo recoge el paquete donde está el otro rider; su incidencia abierta, si la reportó él
   pickup: { name: string | null; phone: string | null; latitude: number | null; longitude: number | null } | null;
   open_incident: { id: number; type: string; type_label: string; status: string } | null;
+  // §10, §22.3: la parada dentro de su ruta, la que sigue y, si falta entregar una anterior, cuál
+  route: {
+    id: number;
+    stop: number;
+    stops: number;
+    next_logistics_order_id: number | null;
+    waiting_for: { stop: number; order: string | null; logistics_order_id: number } | null;
+  } | null;
 };
 
 export type Me = {

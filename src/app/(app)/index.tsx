@@ -190,6 +190,7 @@ export default function Home() {
                   <Text className="shrink text-lg font-extrabold text-foreground">Orden {a.order.name}</Text>
                   <Chip variant="soft" color="accent" size="sm"><Chip.Label>{a.status_label}</Chip.Label></Chip>
                 </View>
+                {a.route ? <Text className="text-sm font-bold text-accent">Parada {a.route.stop} de {a.route.stops}</Text> : null}
                 {a.next_action ? <Text className="text-base text-foreground">{a.next_action}</Text> : null}
                 <Text className="font-bold text-accent">Ver ruta →</Text>
               </Pressable>

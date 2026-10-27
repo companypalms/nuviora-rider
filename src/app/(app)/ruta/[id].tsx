@@ -58,7 +58,9 @@ export default function RouteScreen() {
     );
   }
 
-  const onStreet = ON_STREET.includes(a.status);
+  // §12, §22.3: en una ruta de varias paradas se entrega en el orden oficial; esta espera a la anterior
+  const waiting = a.route?.waiting_for ?? null;
+  const onStreet = ON_STREET.includes(a.status) && !waiting;
   const returning = a.status === RETURNING;
   // §14: el que tuvo la incidencia espera con el paquete; el reemplazo lo recoge donde está él, no en el centro
   const handingOver = a.status === HANDING_OVER;
@@ -94,7 +96,11 @@ export default function RouteScreen() {
         <Text className="shrink text-2xl font-extrabold text-foreground">Orden {a.order.name}</Text>
         <Chip variant="soft" color={onStreet ? 'success' : 'accent'} size="sm"><Chip.Label>{a.status_label}</Chip.Label></Chip>
       </View>
+      {a.route ? <Text className="-mt-2 text-base font-bold text-accent">Parada {a.route.stop} de {a.route.stops}</Text> : null}
       {a.next_action ? <Notice tone={onStreet ? 'ok' : 'warn'} text={a.next_action} /> : null}
+      {waiting ? (
+        <Button label={`Ir a la parada ${waiting.stop}`} onPress={() => router.replace(`/ruta/${waiting.logistics_order_id}`)} />
+      ) : null}
       {a.open_novelty ? (
         <Notice tone="error" text={a.open_novelty.owner === 'ventas' ? 'Tu novedad está con la vendedora: espera instrucciones.' : 'Novedad enviada: el operador la está viendo.'} />
       ) : null}

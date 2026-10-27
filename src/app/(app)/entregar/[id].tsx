@@ -66,7 +66,9 @@ export default function DeliverScreen() {
         method: 'PUT',
         body: { status: 'Entregado', ...(isCash ? { cash_received: Number(cash.replace(',', '.')), change_covered_by: 'company' } : {}) },
       });
-      router.replace('/');
+      // §22.3: "pasar automáticamente a siguiente parada si existe"
+      const next = a.route?.next_logistics_order_id;
+      router.replace(next ? `/ruta/${next}` : '/');
     } catch (e) {
       setError(e instanceof ApiError ? e.message : 'No se pudo marcar la entrega. Intenta otra vez.');
     } finally {
