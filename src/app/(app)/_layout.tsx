@@ -2,6 +2,7 @@ import * as Notifications from 'expo-notifications';
 import { Stack, useRouter } from 'expo-router';
 import { useEffect } from 'react';
 import { Platform } from 'react-native';
+import { openFromAlarm } from '@/lib/offer-screen';
 
 /** Tocar la alarma o un aviso abre su pantalla (la oportunidad o la ruta), también si la app estaba cerrada. */
 function useNotificationTaps() {
@@ -12,9 +13,15 @@ function useNotificationTaps() {
     }
     const open = (response: Notifications.NotificationResponse | null) => {
       const url = response?.notification.request.content.data?.url;
-      if (typeof url === 'string' && url.startsWith('/')) {
-        router.push(url as never);
+      if (typeof url !== 'string' || !url.startsWith('/')) {
+        return;
       }
+      // Si el inicio ya abrió esta oportunidad, no se pone otra encima
+      const offerId = url.match(/^\/oferta\/(\d+)/)?.[1];
+      if (offerId && !openFromAlarm(offerId)) {
+        return;
+      }
+      router.push(url as never);
     };
     void Notifications.getLastNotificationResponseAsync().then((response) => {
       open(response);

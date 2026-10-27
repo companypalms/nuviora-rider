@@ -5,6 +5,7 @@ import { SafeAreaView } from '@/components/safe-area-view';
 import { Button } from '@/components/ui';
 import { stopAlarm } from '@/lib/alarm';
 import { api, ApiError, type Offer } from '@/lib/api';
+import { offerClosed, offerShown } from '@/lib/offer-screen';
 
 // La oportunidad (§8, §8.1, §22.1): a pantalla completa, con su temporizador. No dice nada del destino: ni zona, ni
 // cliente, ni km, ni pago. El primero que confirma gana (§8.2); si otro ganó, lo dice.
@@ -27,7 +28,11 @@ export default function OfferScreen() {
     }).catch(() => setResult('No se pudo cargar la oportunidad.'));
     void api(`/rider/offers/${id}/seen`, { method: 'POST' }).catch(() => undefined);
     Vibration.vibrate([0, 600, 400, 600, 400, 600]);
-    return () => Vibration.cancel();
+    offerShown(String(id));
+    return () => {
+      Vibration.cancel();
+      offerClosed(String(id));
+    };
   }, [id]);
 
   useEffect(() => {

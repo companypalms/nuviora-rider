@@ -1,6 +1,6 @@
 import * as Notifications from 'expo-notifications';
 import { useFocusEffect, useRouter } from 'expo-router';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { AppState, Platform, Pressable, RefreshControl, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from '@/components/safe-area-view';
 import { Chip } from 'heroui-native/chip';
@@ -10,6 +10,7 @@ import { api, type Assignment, type Me, type Offer } from '@/lib/api';
 import { askToIgnoreBatteryOptimization, batteryRestricted, isXiaomi, openAppSettings } from '@/lib/battery';
 import { money } from '@/lib/format';
 import { startLocation, stopLocation, type LocationState } from '@/lib/location';
+import { openFromHome } from '@/lib/offer-screen';
 import { useSession } from '@/lib/session';
 import { getItem, setItem } from '@/lib/storage';
 
@@ -30,7 +31,6 @@ export default function Home() {
   const [xiaomiDone, setXiaomiDone] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
-  const opened = useRef(new Set<number>());
 
   const load = useCallback(async () => {
     try {
@@ -41,9 +41,8 @@ export default function Home() {
       setAssignments(current.assignments);
       setOpenOffers(offers.offers);
       setError(null);
-      const fresh = offers.offers.find((o) => !opened.current.has(o.id));
+      const fresh = offers.offers.find((o) => openFromHome(String(o.id)));
       if (fresh) {
-        opened.current.add(fresh.id);
         router.push(`/oferta/${fresh.id}`);
       }
     } catch (e) {
