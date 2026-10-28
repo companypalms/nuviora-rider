@@ -16,7 +16,7 @@ export const LOCATION_TASK = 'nuviora-ubicacion';
 const GPS_STARTED_KEY = 'nuviora-rider-gps-uptime';
 const GPS_PAUSED_NOTICE = 'ubicacion-pausada';
 
-type Point = { lat: number; lng: number; accuracy: number | null; speed: number | null; recorded_at: string };
+type Point = { lat: number; lng: number; accuracy: number | null; speed: number | null; recorded_at: string; mocked: boolean };
 
 let queue: Point[] = [];
 let subscription: Location.LocationSubscription | null = null;
@@ -28,6 +28,8 @@ const toPoint = (pos: Location.LocationObject): Point => ({
   accuracy: pos.coords.accuracy ?? null,
   speed: pos.coords.speed ?? null,
   recorded_at: new Date(pos.timestamp).toISOString(),
+  // Android avisa si la ubicación viene de una app de GPS falso: el servidor saca al rider de las rondas hasta revisarlo
+  mocked: pos.mocked === true,
 });
 
 async function flush() {
